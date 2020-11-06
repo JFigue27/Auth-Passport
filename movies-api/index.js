@@ -3,7 +3,7 @@ const app = express();
 
 const { config } = require('./config/index');
 
-const autApi = require('./routes/auth');
+const authApi = require('./routes/auth');
 const moviesApi = require('./routes/movies.js');
 const userMoviesApi = require('./routes/userMovies');
 
@@ -20,7 +20,7 @@ const notFoundHandler = require('./utils/middleware/notFoundHandler');
 app.use(express.json());
 
 // routes
-autApi(app);
+authApi(app);
 moviesApi(app);
 userMoviesApi(app);
 

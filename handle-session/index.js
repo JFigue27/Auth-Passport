@@ -13,7 +13,7 @@ app.use(
 
 app.get('/', (req, res) => {
   req.session.count = req.session.count ? req.session.count + 1 : 1;
-  res.status(200).json({ hell: 'world', counter: req.session.count });
+  res.status(200).json({ hello: 'world', counter: req.session.count });
 });
 
 app.listen(3000, () => {

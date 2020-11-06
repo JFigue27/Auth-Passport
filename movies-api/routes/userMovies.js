@@ -1,11 +1,10 @@
 const express = require('express');
 const passport = require('passport');
 
-const UserMoviesServices = require('../services/userMovies');
+const UserMoviesService = require('../services/userMovies');
 
 const validationHandler = require('../utils/middleware/validationHandler');
 const scopesValidationHandler = require('../utils/middleware/scopesValidationHandler');
-
 
 const { movieIdSchema } = require('../utils/schemas/movies');
 const { userIdSchema } = require('../utils/schemas/users');
@@ -18,7 +17,7 @@ function userMoviesApi(app) {
   const router = express.Router();
   app.use('/api/user-movies', router);
 
-  const userMoviesService = new UserMoviesServices();
+  const userMoviesService = new UserMoviesService();
 
   router.get(
     '/',
@@ -26,7 +25,7 @@ function userMoviesApi(app) {
     scopesValidationHandler(['read:user-movies']),
     validationHandler({ userId: userIdSchema }, 'query'),
     async (req, res, next) => {
-      const { userId } = req.query;
+      const { userId } = req.body;
 
       try {
         const userMovies = await userMoviesService.getUserMovies({ userId });
@@ -48,9 +47,9 @@ function userMoviesApi(app) {
     async (req, res, next) => {
       const { body: userMovie } = req;
       try {
-        const createdUserMovieId = await userMoviesService.createUserMovies(
+        const createdUserMovieId = await userMoviesService.createUserMovies({
           userMovie
-        );
+        });
 
         res.status(201).json({
           data: createdUserMovieId,
@@ -66,24 +65,21 @@ function userMoviesApi(app) {
     '/:userMovieId',
     passport.authenticate('jwt', { session: false }),
     scopesValidationHandler(['delete:user-movies']),
-    validationHandler(
-      { userMovieId: movieIdSchema },
-      'params',
-      async (req, res, next) => {
-        const { userMovieId } = req.params;
-        try {
-          const deletedUserMovieId = await userMoviesService.deleteUserMovie(
-            userMovieId
-          );
-          res.status(200).json({
-            data: deletedUserMovieId,
-            message: 'user movie deleted'
-          });
-        } catch (error) {
-          next(error);
-        }
+    validationHandler({ userMovieId: movieIdSchema }, 'params'),
+    async (req, res, next) => {
+      const { userMovieId } = req.params;
+      try {
+        const deletedUserMovieId = await userMoviesService.deleteUserMovie({
+          userMovieId
+        });
+        res.status(200).json({
+          data: deletedUserMovieId,
+          message: 'user movie deleted'
+        });
+      } catch (error) {
+        next(error);
       }
-    )
+    }
   );
 }
 

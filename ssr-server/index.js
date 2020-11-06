@@ -7,7 +7,6 @@ const axios = require('axios');
 const { config } = require('./config');
 const app = express();
 
-
 // Body parser
 app.use(express.json());
 app.use(cookieParser());
