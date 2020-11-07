@@ -9,4 +9,4 @@ const config = {
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
 };
 
-module.exports = { config: config };
+module.exports = { config };
