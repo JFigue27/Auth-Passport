@@ -84,6 +84,12 @@ function authApi(app) {
     }
   });
 
+  router.get('/prueba', (req, res, next) => {
+    console.log('Entro a prueba!');
+    res.send('Algo !');
+    res.end();
+  });
+
   router.post(
     '/sign-provider',
     validationHandler(createProviderUserSchema),

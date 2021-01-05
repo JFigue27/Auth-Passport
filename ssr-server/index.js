@@ -17,6 +17,9 @@ require('./utils/auth/strategies/basic');
 // oAuth strategy
 require('./utils/auth/strategies/oauth');
 
+// Google strategy
+require('./utils/auth/strategies/google');
+
 const THIRTY_DAYS_IN_SEC = 2592000;
 const TWO_HOURS_IN_SEC = 72000;
 
@@ -124,6 +127,33 @@ app.get(
 app.get(
   '/auth/google-oauth/callback',
   passport.authenticate('google-oauth', { session: false }),
+
+  function (req, res, next) {
+    if (!req.user) {
+      next(boom.unauthorized());
+    }
+
+    const { token, ...user } = req.user;
+
+    res.cookie('token', token, {
+      httpOnly: !config.dev,
+      secure: !config.dev,
+    });
+
+    res.status(200).json(user);
+  }
+);
+
+app.get(
+  '/auth/google',
+  passport.authenticate('google', {
+    scope: ['email', 'profile', 'openid'],
+  })
+);
+
+app.get(
+  '/auth/google/callback',
+  passport.authenticate('google', { session: false }),
 
   function (req, res, next) {
     if (!req.user) {
